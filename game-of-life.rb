@@ -56,24 +56,11 @@ class Grid
     (-1..1).map do |x_diff|
       (-1..1).map do |y_diff|
         next if x_diff == 0 && y_diff == 0
-        nextx = next_index x, x_diff, X
-        nexty = next_index y, y_diff, Y
+        nextx = (x+x_diff) % X
+        nexty = (y+y_diff) % Y
         [nextx,nexty]
       end.compact
     end.flatten 1
-  end
-
-  def next_index curr, diff, max
-    max = max - 1
-    ret = if curr + diff > max
-      curr+diff - max 
-    elsif curr+diff < 0
-      curr + diff + max 
-    else
-      curr+diff
-    end
-    raise "not within bounds #{ret} - #{max+1}" unless (0...max+1) === ret
-    ret
   end
 
   def each 
