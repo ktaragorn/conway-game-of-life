@@ -24,8 +24,13 @@ class Cell
     end
   end
 
+  def live_char
+    "o"
+    # rand(255).chr
+  end
+
   def to_s
-    @alive ? (rand*255).to_i.chr+" " : "  "
+    @alive ? "#{live_char} " : "  "
   end
 end
 
@@ -37,14 +42,13 @@ class Grid
 
     X.times do |x|
       Y.times do |y|
-        @grid[x] << Cell.new(Array(live_array[x])[y] == "x")
+        @grid[x] << Cell.new(Array(live_array[x])[y] && live_array[x][y].downcase == "x")
       end
       @grid<<[]
     end   
   end
 
   def tick
-
     each do |x,y|
       @grid[x][y].live_neighbours = neighbour_indices(x,y).inject(0){|alive,(x,y)| alive + (@grid[x][y].alive? ? 1: 0)}
     end
@@ -74,29 +78,27 @@ class Grid
   end
 
   def print
-    @grid.each do |array|
-      puts array.join
-    end
+    puts @grid.map{|arr| arr.join}.join "\n"
   end
 end
 
 #initialize
 
 g = Grid.new([
-  [],[],
-  %w(o o o o o x),
-  %w(o o o x o x),
-  %w(o o o o x x),
-  %w(o o o o x x),
-  %w(o o o x o x),
-  %w(o o o o o x),
+  [],[],[],[],
+  %w(. . . X X X . X),
+  %w(. . . X . . . .),
+  %w(. . . . . . X X),
+  %w(. . . . x x . x),
+  %w(. . . x . X . x),
+  %w(. . . . . . . .),
   ])
 tick_count= 0
 loop do 
-  system "clear"
   g.tick
+  system "clear"
   g.print
   puts tick_count
   tick_count += 1
-  sleep 0.1
+  #sleep 0.01
 end
